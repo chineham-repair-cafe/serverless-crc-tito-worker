@@ -1,4 +1,4 @@
-name = "worker-rust"
+name = "serverless-nhrc-tito-ticket-worker"
 main = "build/worker/shim.mjs"
 compatibility_date = "2023-12-01"
 
@@ -9,5 +9,4 @@ command = "cargo install -q worker-build && worker-build --release"
 build = { command = "cargo install -q worker-build && worker-build --dev" }
 
 [vars]
-TITO_ACCOUNT_SLUG = "<INSERT ACCOUNT SLUG HERE>"
-TITO_TOKEN = "<INSERT TOKEN HERE>
+TITO_TOKEN_CHECK = "false"
