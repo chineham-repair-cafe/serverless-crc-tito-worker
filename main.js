@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   const workerUrl = "https://func.tito.nhrc.repair-cafes.shymega.org.uk/tickets/count";
-  const attendeeCountElement = ".attendee-count";
+  const attendeeCountElement = "attendee-count";
 
   fetch(workerUrl)
     .then(resp => {
