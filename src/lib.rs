@@ -43,9 +43,22 @@ pub fn start() {
 async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
     info!("Starting up");
 
+    // Env exist checks.
+    if env.secret("TITO_TOKEN").is_err() {
+        panic!("TITO_TOKEN not found in environment");
+    }
+
+    if env.secret("TITO_ACCOUNT_SLUG").is_err() {
+        panic!("TITO_ACCOUNT_SLUG not found in environment");
+    }
+
+    if env.var("TITO_TOKEN_CHECK").is_err() {
+        panic!("TITO_TOKEN_CHECK not found in environment");
+    }
+
     let state: State = State {
-        token: env.var("TITO_TOKEN").unwrap().to_string(),
-        account_slug: env.var("TITO_ACCOUNT_SLUG").unwrap().to_string(),
+        token: env.secret("TITO_TOKEN").unwrap().to_string(),
+        account_slug: env.secret("TITO_ACCOUNT_SLUG").unwrap().to_string(),
     };
 
     if env.var("TITO_TOKEN_CHECK").unwrap().to_string() == "true" {
