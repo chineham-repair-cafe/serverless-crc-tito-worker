@@ -78,6 +78,11 @@ impl GetUpcomingEventTicketCount {
                 return Err(err);
             }
         };
+
+        if resp.status_code() != 200 {
+            panic!("Error: {:?}", resp.text().await.expect("Unable to get text from response object."));
+        };
+
         let json = resp
             .text()
             .await
