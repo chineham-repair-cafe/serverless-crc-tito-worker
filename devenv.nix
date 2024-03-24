@@ -24,5 +24,5 @@
     markdownlint.enable = true;
     statix.enable = true;
   };
-  pre-commit.settings.clippy.offline = false;
+  pre-commit.hooks.clippy.settings.offline = false;
 }
