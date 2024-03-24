@@ -1,7 +1,7 @@
 mod ext;
 
 use ext::tito::client::{GetUpcomingEventTicketCount, TestTitoToken};
-use log::{error, info, debug};
+use log::{debug, error, info};
 use serde_json::json;
 use worker::*;
 
@@ -101,9 +101,13 @@ async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
         };
     };
 
-    let strip_pattern = &format!("https://{}", &req.headers().get("host")
+    let strip_pattern = &format!(
+        "https://{}",
+        &req.headers()
+            .get("host")
             .expect("Failed to get host")
-            .expect("Failed to get host"));
+            .expect("Failed to get host")
+    );
     let stripped_url = req
         .url()
         .expect("Failed to get request url")
@@ -113,7 +117,7 @@ async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
         .to_lowercase();
 
     return match stripped_url.clone().as_str() {
-        "/tickets/count" => return get_ticket_count(state.clone()).await,
+        "/tickets/count" => return get_ticket_count(state.clone(), req).await,
         "/events/next" | _ => {
             let json = json!({
                 "status": "NOT_FOUND",
