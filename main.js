@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const workerUrl = "https://func.nhrc.tito.repair-cafes.shymega.org.uk/tickets/count";
-  const attendeeCountClass = "#attendee-count";
+  const workerUrl = "https://func.tito.nhrc.repair-cafes.shymega.org.uk/tickets/count";
+  const attendeeCountElement = ".attendee-count";
 
   fetch(workerUrl)
     .then(resp => {
@@ -11,10 +11,10 @@ document.addEventListener("DOMContentLoaded", () => {
       };
     })
     .then(data => {
-      document.getElementById(attendeeCountClass).innerHTML = "Attendees: " + data.count;
+      document.getElementById(attendeeCountElement).innerHTML = "Attendees: " + data.count;
     })
     .catch(err => {
-      document.getElementById(attendeeCountClass).innerHTML = ""; // Replace element with blank string.
+      document.getElementById(attendeeCountElement).innerHTML = ""; // Replace element with blank string.
       // Then log the error to the console.
       console.error("Error fetching attendee count: ", err);
       console.error("If you are seeing this message, please contact the site administrator.")
