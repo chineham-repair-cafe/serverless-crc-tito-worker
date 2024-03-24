@@ -11,7 +11,34 @@ pub struct State {
     pub account_slug: String,
 }
 
-async fn get_ticket_count(state: State) -> Result<Response> {
+fn cors_response_header(req: &worker::Headers, origin: &str) -> worker::Headers {
+    let mut headers = worker::Headers::new();
+    let origin = match req.get("Origin").expect("Failed to get origin") {
+        Some(value) => value,
+        None => return headers,
+    };
+
+    headers
+        .set("Access-Control-Allow-Headers", "Content-Type")
+        .expect("Unable to set header");
+    headers
+        .set("Access-Control-Allow-Methods", "GET")
+        .expect("Unable to set header");
+    headers.set("Vary", "Origin").expect("Unable to set header");
+
+    if origin.split(',').any(|val| val == origin) {
+        headers
+            .set("Access-Control-Allow-Origin", &origin)
+            .expect("Unable to set header");
+    }
+
+    headers
+        .set("Access-Control-Max-Age", "86400")
+        .expect("Unable to set header");
+    headers
+}
+
+async fn get_ticket_count(state: State, req: Request) -> Result<Response> {
     let token = state.token;
     let account_slug = state.account_slug;
 
@@ -31,13 +58,15 @@ async fn get_ticket_count(state: State) -> Result<Response> {
         "count": tickets_count,
     });
 
-    Response::ok(json.to_string())
+    let headers = cors_response_header(&req.headers(), "https://nhrc.uk");
+
+    Ok(Response::ok(json.to_string())?.with_headers(headers))
 }
 
 #[event(start)]
 pub fn start() {
     worker_logger::init_with_level(&log::Level::Info)
-} 
+}
 
 #[event(fetch)]
 async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
