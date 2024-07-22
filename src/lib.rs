@@ -3,6 +3,7 @@ mod ext;
 use ext::tito::client::{GetUpcomingEventTicketCount, TestTitoToken};
 use log::{debug, error, info};
 use serde_json::json;
+use std::str::FromStr;
 use worker::*;
 
 #[derive(Clone, Debug)]
@@ -16,8 +17,8 @@ fn cors_response_header(req: &worker::Headers) -> worker::Headers {
     let origin = if let Some(origin) = req.get("Origin").expect("Failed to get origin") {
         origin
     } else {
-        "https://chinehamrepair.org.uk"
-    }
+        "https://chinehamrepair.org.uk".to_string()
+    };
 
     headers
         .set("Access-Control-Allow-Headers", "Content-Type")
@@ -90,11 +91,14 @@ async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
         token: env.secret("TITO_TOKEN").unwrap().to_string(),
         account_slug: env.secret("TITO_ACCOUNT_SLUG").unwrap().to_string(),
     };
-
-    if env.var("TITO_TOKEN_CHECK").unwrap().to_string() == "true" {
-        debug!("Running token test");
+    if FromStr::from_str(
+        &env.var("TITO_TOKEN_CHECK")
+            .expect("No env var `TITO_TOKEN_CHECK` set!")
+            .to_string(),
+    )
+    .expect("Error converting to bool")
+    {
         if !TestTitoToken::run(&state.token).await {
-            error!("Token test failed");
             let json = json!({
                 "status": "BAD_CONF",
             });
