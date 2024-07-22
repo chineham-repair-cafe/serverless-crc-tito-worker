@@ -1,6 +1,6 @@
 name = "serverless-crc-tito-ticket-worker"
 main = "build/worker/shim.mjs"
-compatibility_date = "2023-12-01"
+compatibility_date = "2024-05-04"
 
 [build]
 command = "cargo install -q worker-build && worker-build --release"
